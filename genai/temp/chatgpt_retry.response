@@ -1,0 +1,160 @@
+{
+    "models": [
+        {
+            "classname": "Bakery",
+            "code": "class Bakery(Base):\n    \"\"\"description: Store information about different bakeries\"\"\"\n    __tablename__ = 'bakery'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    location = Column(String)\n    established_date = Column(DateTime)",
+            "sqlite_create": "CREATE TABLE bakery (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    location TEXT,\n    established_date DATETIME\n);",
+            "description": "Store information about different bakeries",
+            "name": "Bakery"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Represent baked products available in various bakeries\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    bakery_id = Column(Integer, ForeignKey('bakery.id'))\n    name = Column(String)\n    type = Column(String)\n    price = Column(Integer)",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    bakery_id INTEGER REFERENCES bakery(id),\n    name TEXT,\n    type TEXT,\n    price INTEGER\n);",
+            "description": "Represent baked products available in various bakeries",
+            "name": "Product"
+        },
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Customer information including names and preferred bakery\"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    preferred_bakery_id = Column(Integer, ForeignKey('bakery.id'))",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    preferred_bakery_id INTEGER REFERENCES bakery(id)\n);",
+            "description": "Customer information including names and preferred bakery",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Orders placed by customers in bakeries\"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    bakery_id = Column(Integer, ForeignKey('bakery.id'))\n    order_date = Column(DateTime)",
+            "sqlite_create": "CREATE TABLE order (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER REFERENCES customer(id),\n    bakery_id INTEGER REFERENCES bakery(id),\n    order_date DATETIME\n);",
+            "description": "Orders placed by customers in bakeries",
+            "name": "Order"
+        },
+        {
+            "classname": "OrderDetail",
+            "code": "class OrderDetail(Base):\n    \"\"\"description: Details of each order placed, including product and quantity\"\"\"\n    __tablename__ = 'order_detail'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer)",
+            "sqlite_create": "CREATE TABLE order_detail (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER REFERENCES order(id),\n    product_id INTEGER REFERENCES product(id),\n    quantity INTEGER\n);",
+            "description": "Details of each order placed, including product and quantity",
+            "name": "OrderDetail"
+        },
+        {
+            "classname": "Supplier",
+            "code": "class Supplier(Base):\n    \"\"\"description: Information about suppliers for the bakeries\"\"\"\n    __tablename__ = 'supplier'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    contact_number = Column(String)",
+            "sqlite_create": "CREATE TABLE supplier (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    contact_number TEXT\n);",
+            "description": "Information about suppliers for the bakeries",
+            "name": "Supplier"
+        },
+        {
+            "classname": "Supply",
+            "code": "class Supply(Base):\n    \"\"\"description: Supplies provided by suppliers to bakeries\"\"\"\n    __tablename__ = 'supply'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    supplier_id = Column(Integer, ForeignKey('supplier.id'))\n    bakery_id = Column(Integer, ForeignKey('bakery.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    supply_date = Column(DateTime)\n    quantity = Column(Integer)",
+            "sqlite_create": "CREATE TABLE supply (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    supplier_id INTEGER REFERENCES supplier(id),\n    bakery_id INTEGER REFERENCES bakery(id),\n    product_id INTEGER REFERENCES product(id),\n    supply_date DATETIME,\n    quantity INTEGER\n);",
+            "description": "Supplies provided by suppliers to bakeries",
+            "name": "Supply"
+        },
+        {
+            "classname": "Inventory",
+            "code": "class Inventory(Base):\n    \"\"\"description: Inventory details for each bakery for stock keeping\"\"\"\n    __tablename__ = 'inventory'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    bakery_id = Column(Integer, ForeignKey('bakery.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    stock_quantity = Column(Integer)",
+            "sqlite_create": "CREATE TABLE inventory (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    bakery_id INTEGER REFERENCES bakery(id),\n    product_id INTEGER REFERENCES product(id),\n    stock_quantity INTEGER\n);",
+            "description": "Inventory details for each bakery for stock keeping",
+            "name": "Inventory"
+        },
+        {
+            "classname": "Employee",
+            "code": "class Employee(Base):\n    \"\"\"description: Details about bakery employees, including their role and contact\"\"\"\n    __tablename__ = 'employee'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    bakery_id = Column(Integer, ForeignKey('bakery.id'))\n    name = Column(String)\n    role = Column(String)",
+            "sqlite_create": "CREATE TABLE employee (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    bakery_id INTEGER REFERENCES bakery(id),\n    name TEXT,\n    role TEXT\n);",
+            "description": "Details about bakery employees, including their role and contact",
+            "name": "Employee"
+        },
+        {
+            "classname": "Shift",
+            "code": "class Shift(Base):\n    \"\"\"description: Scheduled work shifts for employees in bakeries\"\"\"\n    __tablename__ = 'shift'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    employee_id = Column(Integer, ForeignKey('employee.id'))\n    shift_date = Column(DateTime)\n    start_time = Column(DateTime)\n    end_time = Column(DateTime)",
+            "sqlite_create": "CREATE TABLE shift (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    employee_id INTEGER REFERENCES employee(id),\n    shift_date DATETIME,\n    start_time DATETIME,\n    end_time DATETIME\n);",
+            "description": "Scheduled work shifts for employees in bakeries",
+            "name": "Shift"
+        }
+    ],
+    "rules": [],
+    "test_data": "",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "bakery1",
+            "code": "bakery1 = Bakery(name=\"Sweet Cravings\", location=\"Downtown\", established_date=date(2020, 2, 15))"
+        },
+        {
+            "test_data_row_variable": "bakery2",
+            "code": "bakery2 = Bakery(name=\"Bread Haven\", location=\"Uptown\", established_date=date(2018, 5, 12))"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(bakery_id=1, name=\"Banana Bread\", type=\"Bread\", price=5)"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(bakery_id=1, name=\"Croissant\", type=\"Pastry\", price=3)"
+        },
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(name=\"Alice Walker\", preferred_bakery_id=1)"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(name=\"Bob Smith\", preferred_bakery_id=1)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(customer_id=1, bakery_id=1, order_date=date(2023, 10, 2))"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(customer_id=2, bakery_id=1, order_date=date(2023, 10, 3))"
+        },
+        {
+            "test_data_row_variable": "order_detail1",
+            "code": "order_detail1 = OrderDetail(order_id=1, product_id=1, quantity=2)"
+        },
+        {
+            "test_data_row_variable": "order_detail2",
+            "code": "order_detail2 = OrderDetail(order_id=2, product_id=2, quantity=5)"
+        },
+        {
+            "test_data_row_variable": "supplier1",
+            "code": "supplier1 = Supplier(name=\"Grain Supplies Ltd.\", contact_number=\"555-1234\")"
+        },
+        {
+            "test_data_row_variable": "supplier2",
+            "code": "supplier2 = Supplier(name=\"Yeast Essentials Inc.\", contact_number=\"555-5678\")"
+        },
+        {
+            "test_data_row_variable": "supply1",
+            "code": "supply1 = Supply(supplier_id=1, bakery_id=1, product_id=1, supply_date=date(2023, 9, 5), quantity=50)"
+        },
+        {
+            "test_data_row_variable": "supply2",
+            "code": "supply2 = Supply(supplier_id=2, bakery_id=1, product_id=2, supply_date=date(2023, 9, 7), quantity=40)"
+        },
+        {
+            "test_data_row_variable": "inventory1",
+            "code": "inventory1 = Inventory(bakery_id=1, product_id=1, stock_quantity=30)"
+        },
+        {
+            "test_data_row_variable": "inventory2",
+            "code": "inventory2 = Inventory(bakery_id=1, product_id=2, stock_quantity=20)"
+        },
+        {
+            "test_data_row_variable": "employee1",
+            "code": "employee1 = Employee(bakery_id=1, name=\"John Doe\", role=\"Baker\")"
+        },
+        {
+            "test_data_row_variable": "employee2",
+            "code": "employee2 = Employee(bakery_id=1, name=\"Sara Conner\", role=\"Cashier\")"
+        },
+        {
+            "test_data_row_variable": "shift1",
+            "code": "shift1 = Shift(employee_id=1, shift_date=date(2023, 10, 1), start_time=date(2023, 10, 1), end_time=date(2023, 10, 1))"
+        },
+        {
+            "test_data_row_variable": "shift2",
+            "code": "shift2 = Shift(employee_id=2, shift_date=date(2023, 10, 2), start_time=date(2023, 10, 2), end_time=date(2023, 10, 2))"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO bakery (name, location, established_date) VALUES ('Sweet Cravings', 'Downtown', '2020-02-15');\nINSERT INTO bakery (name, location, established_date) VALUES ('Bread Haven', 'Uptown', '2018-05-12');\nINSERT INTO product (bakery_id, name, type, price) VALUES (1, 'Banana Bread', 'Bread', 5);\nINSERT INTO product (bakery_id, name, type, price) VALUES (1, 'Croissant', 'Pastry', 3);\nINSERT INTO customer (name, preferred_bakery_id) VALUES ('Alice Walker', 1);\nINSERT INTO customer (name, preferred_bakery_id) VALUES ('Bob Smith', 1);\nINSERT INTO \"order\" (customer_id, bakery_id, order_date) VALUES (1, 1, '2023-10-02');\nINSERT INTO \"order\" (customer_id, bakery_id, order_date) VALUES (2, 1, '2023-10-03');\nINSERT INTO order_detail (order_id, product_id, quantity) VALUES (1, 1, 2);\nINSERT INTO order_detail (order_id, product_id, quantity) VALUES (2, 2, 5);\nINSERT INTO supplier (name, contact_number) VALUES ('Grain Supplies Ltd.', '555-1234');\nINSERT INTO supplier (name, contact_number) VALUES ('Yeast Essentials Inc.', '555-5678');\nINSERT INTO supply (supplier_id, bakery_id, product_id, supply_date, quantity) VALUES (1, 1, 1, '2023-09-05', 50);\nINSERT INTO supply (supplier_id, bakery_id, product_id, supply_date, quantity) VALUES (2, 1, 2, '2023-09-07', 40);\nINSERT INTO inventory (bakery_id, product_id, stock_quantity) VALUES (1, 1, 30);\nINSERT INTO inventory (bakery_id, product_id, stock_quantity) VALUES (1, 2, 20);\nINSERT INTO employee (bakery_id, name, role) VALUES (1, 'John Doe', 'Baker');\nINSERT INTO employee (bakery_id, name, role) VALUES (1, 'Sara Conner', 'Cashier');\nINSERT INTO shift (employee_id, shift_date, start_time, end_time) VALUES (1, '2023-10-01', '2023-10-01', '2023-10-01');\nINSERT INTO shift (employee_id, shift_date, start_time, end_time) VALUES (2, '2023-10-02', '2023-10-02', '2023-10-02');",
+    "name": "Bakery_Schema_Model"
+}

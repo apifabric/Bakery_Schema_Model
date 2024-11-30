@@ -1,0 +1,107 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Bakery: Store information about different bakeries
+Customer: Customer information including names and preferred bakery
+Employee: Details about bakery employees, including their role and contact
+Inventory: Inventory details for each bakery for stock keeping
+Product: Represent baked products available in various bakeries
+Order: Orders placed by customers in bakeries
+OrderDetail: Details of each order placed, including product and quantity
+Shift: Scheduled work shifts for employees in bakeries
+Supplier: Information about suppliers for the bakeries
+Supply: Supplies provided by suppliers to bakeries
+'''
+}
+
+Table Bakery {
+    id INTEGER [primary key]
+    name VARCHAR 
+    location VARCHAR 
+    established_date DATETIME 
+    }
+
+Table Customer {
+    id INTEGER [primary key]
+    name VARCHAR 
+    preferred_bakery_id INTEGER 
+    }
+
+Table Employee {
+    id INTEGER [primary key]
+    bakery_id INTEGER 
+    name VARCHAR 
+    role VARCHAR 
+    }
+
+Table Inventory {
+    id INTEGER [primary key]
+    bakery_id INTEGER 
+    product_id INTEGER 
+    stock_quantity INTEGER 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    bakery_id INTEGER 
+    name VARCHAR 
+    Type VARCHAR 
+    price INTEGER 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    bakery_id INTEGER 
+    order_date DATETIME 
+    }
+
+Table OrderDetail {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    }
+
+Table Shift {
+    id INTEGER [primary key]
+    employee_id INTEGER 
+    shift_date DATETIME 
+    start_time DATETIME 
+    end_time DATETIME 
+    }
+
+Table Supplier {
+    id INTEGER [primary key]
+    name VARCHAR 
+    contact_number VARCHAR 
+    }
+
+Table Supply {
+    id INTEGER [primary key]
+    supplier_id INTEGER 
+    bakery_id INTEGER 
+    product_id INTEGER 
+    supply_date DATETIME 
+    quantity INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: Customer.(preferred_bakery_id) < Bakery.(id)
+    Ref: Employee.(bakery_id) < Bakery.(id)
+    Ref: Inventory.(bakery_id) < Bakery.(id)
+    Ref: Inventory.(product_id) < Product.(id)
+    Ref: Product.(bakery_id) < Bakery.(id)
+    Ref: Order.(bakery_id) < Bakery.(id)
+    Ref: Order.(customer_id) < Customer.(id)
+    Ref: OrderDetail.(order_id) < Order.(id)
+    Ref: OrderDetail.(product_id) < Product.(id)
+    Ref: Shift.(employee_id) < Employee.(id)
+    Ref: Supply.(bakery_id) < Bakery.(id)
+    Ref: Supply.(product_id) < Product.(id)
+    Ref: Supply.(supplier_id) < Supplier.(id)

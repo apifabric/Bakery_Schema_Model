@@ -1,0 +1,320 @@
+about:
+  date: November 30, 2024 15:27:12
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 13
+  number_tables: 10
+info_toggle_checked: true
+resources:
+  Bakery:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: location
+    - name: established_date
+      type: DATETIME
+    - name: id
+    description: Store information about different bakeries
+    info_list: Store information about different bakeries
+    tab_groups:
+    - direction: tomany
+      fks:
+      - preferred_bakery_id
+      name: CustomerList
+      resource: Customer
+    - direction: tomany
+      fks:
+      - bakery_id
+      name: EmployeeList
+      resource: Employee
+    - direction: tomany
+      fks:
+      - bakery_id
+      name: InventoryList
+      resource: Inventory
+    - direction: tomany
+      fks:
+      - bakery_id
+      name: OrderList
+      resource: Order
+    - direction: tomany
+      fks:
+      - bakery_id
+      name: ProductList
+      resource: Product
+    - direction: tomany
+      fks:
+      - bakery_id
+      name: SupplyList
+      resource: Supply
+    type: Bakery
+    user_key: name
+  Customer:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: preferred_bakery_id
+    - name: id
+    description: Customer information including names and preferred bakery
+    info_list: Customer information including names and preferred bakery
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    - direction: toone
+      fks:
+      - preferred_bakery_id
+      name: preferred_bakery
+      resource: Bakery
+    type: Customer
+    user_key: name
+  Employee:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: bakery_id
+    - name: role
+    - name: id
+    description: Details about bakery employees, including their role and contact
+    info_list: Details about bakery employees, including their role and contact
+    tab_groups:
+    - direction: tomany
+      fks:
+      - employee_id
+      name: ShiftList
+      resource: Shift
+    - direction: toone
+      fks:
+      - bakery_id
+      name: bakery
+      resource: Bakery
+    type: Employee
+    user_key: name
+  Inventory:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: bakery_id
+    - name: product_id
+    - name: stock_quantity
+    description: Inventory details for each bakery for stock keeping
+    info_list: Inventory details for each bakery for stock keeping
+    tab_groups:
+    - direction: toone
+      fks:
+      - bakery_id
+      name: bakery
+      resource: Bakery
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Inventory
+    user_key: id
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: bakery_id
+    - name: customer_id
+    - name: order_date
+      type: DATETIME
+    description: Orders placed by customers in bakeries
+    info_list: Orders placed by customers in bakeries
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: OrderDetailList
+      resource: OrderDetail
+    - direction: toone
+      fks:
+      - bakery_id
+      name: bakery
+      resource: Bakery
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+    user_key: id
+  OrderDetail:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: order_id
+    - name: product_id
+    - name: quantity
+    description: Details of each order placed, including product and quantity
+    info_list: Details of each order placed, including product and quantity
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: OrderDetail
+    user_key: id
+  Product:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: bakery_id
+    - name: Type
+    - name: price
+    - name: id
+    description: Represent baked products available in various bakeries
+    info_list: Represent baked products available in various bakeries
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: InventoryList
+      resource: Inventory
+    - direction: tomany
+      fks:
+      - product_id
+      name: OrderDetailList
+      resource: OrderDetail
+    - direction: tomany
+      fks:
+      - product_id
+      name: SupplyList
+      resource: Supply
+    - direction: toone
+      fks:
+      - bakery_id
+      name: bakery
+      resource: Bakery
+    type: Product
+    user_key: name
+  Shift:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: employee_id
+    - name: shift_date
+      type: DATETIME
+    - name: start_time
+      type: DATETIME
+    - name: end_time
+      type: DATETIME
+    description: Scheduled work shifts for employees in bakeries
+    info_list: Scheduled work shifts for employees in bakeries
+    tab_groups:
+    - direction: toone
+      fks:
+      - employee_id
+      name: employee
+      resource: Employee
+    type: Shift
+    user_key: id
+  Supplier:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: contact_number
+    - name: id
+    description: Information about suppliers for the bakeries
+    info_list: Information about suppliers for the bakeries
+    tab_groups:
+    - direction: tomany
+      fks:
+      - supplier_id
+      name: SupplyList
+      resource: Supply
+    type: Supplier
+    user_key: name
+  Supply:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: bakery_id
+    - name: product_id
+    - name: supplier_id
+    - name: supply_date
+      type: DATETIME
+    - name: quantity
+    description: Supplies provided by suppliers to bakeries
+    info_list: Supplies provided by suppliers to bakeries
+    tab_groups:
+    - direction: toone
+      fks:
+      - bakery_id
+      name: bakery
+      resource: Bakery
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    - direction: toone
+      fks:
+      - supplier_id
+      name: supplier
+      resource: Supplier
+    type: Supply
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

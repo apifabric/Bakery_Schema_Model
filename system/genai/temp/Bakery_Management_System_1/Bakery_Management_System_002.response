@@ -1,0 +1,286 @@
+{
+    "models": [
+        {
+            "classname": "Bakery",
+            "code": "class Bakery(Base):\\n    \"\"\"description: Represents a bakery where products are produced and sold.\"\"\"\\n    __tablename__ = 'bakeries'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String)\\n    established_date = Column(Date)\\n    location = Column(String)\\n",
+            "sqlite_create": "CREATE TABLE bakeries (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, established_date DATE, location TEXT);",
+            "description": "Represents a bakery where products are produced and sold.",
+            "name": "bakery"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\\n    \"\"\"description: Represents a product such as bread, pastry, or cake produced by the bakery.\"\"\"\\n    __tablename__ = 'products'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    bakery_id = Column(Integer, ForeignKey('bakeries.id'))\\n    name = Column(String)\\n    price = Column(Integer)\\n    in_stock = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, bakery_id INTEGER, name TEXT, price INTEGER, in_stock INTEGER, FOREIGN KEY(bakery_id) REFERENCES bakeries(id));",
+            "description": "Represents a product such as bread, pastry, or cake produced by the bakery.",
+            "name": "product"
+        },
+        {
+            "classname": "Ingredient",
+            "code": "class Ingredient(Base):\\n    \"\"\"description: Represents an ingredient used in the products by the bakery.\"\"\"\\n    __tablename__ = 'ingredients'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String)\\n    quantity_available = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, quantity_available INTEGER);",
+            "description": "Represents an ingredient used in the products by the bakery.",
+            "name": "ingredient"
+        },
+        {
+            "classname": "Employee",
+            "code": "class Employee(Base):\\n    \"\"\"description: Represents an employee working at the bakery.\"\"\"\\n    __tablename__ = 'employees'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    bakery_id = Column(Integer, ForeignKey('bakeries.id'))\\n    name = Column(String)\\n    position = Column(String)\\n    start_date = Column(Date)\\n",
+            "sqlite_create": "CREATE TABLE employees (id INTEGER PRIMARY KEY AUTOINCREMENT, bakery_id INTEGER, name TEXT, position TEXT, start_date DATE, FOREIGN KEY(bakery_id) REFERENCES bakeries(id));",
+            "description": "Represents an employee working at the bakery.",
+            "name": "employee"
+        },
+        {
+            "classname": "Supplier",
+            "code": "class Supplier(Base):\\n    \"\"\"description: Represents a supplier that provides ingredients to the bakery.\"\"\"\\n    __tablename__ = 'suppliers'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String)\\n    contact = Column(String)\\n",
+            "sqlite_create": "CREATE TABLE suppliers (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, contact TEXT);",
+            "description": "Represents a supplier that provides ingredients to the bakery.",
+            "name": "supplier"
+        },
+        {
+            "classname": "SupplierIngredient",
+            "code": "class SupplierIngredient(Base):\\n    \"\"\"description: Represents the link between suppliers and ingredients they provide.\"\"\"\\n    __tablename__ = 'supplier_ingredients'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    supplier_id = Column(Integer, ForeignKey('suppliers.id'))\\n    ingredient_id = Column(Integer, ForeignKey('ingredients.id'))\\n",
+            "sqlite_create": "CREATE TABLE supplier_ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT, supplier_id INTEGER, ingredient_id INTEGER, FOREIGN KEY(supplier_id) REFERENCES suppliers(id), FOREIGN KEY(ingredient_id) REFERENCES ingredients(id));",
+            "description": "Represents the link between suppliers and ingredients they provide.",
+            "name": "supplier_ingredient"
+        },
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\\n    \"\"\"description: Represents a customer who buys products from the bakery.\"\"\"\\n    __tablename__ = 'customers'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String)\\n    contact = Column(String)\\n",
+            "sqlite_create": "CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, contact TEXT);",
+            "description": "Represents a customer who buys products from the bakery.",
+            "name": "customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\\n    \"\"\"description: Represents a customer order within the bakery.\"\"\"\\n    __tablename__ = 'orders'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    customer_id = Column(Integer, ForeignKey('customers.id'))\\n    order_date = Column(Date)\\n    total_amount = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, customer_id INTEGER, order_date DATE, total_amount INTEGER, FOREIGN KEY(customer_id) REFERENCES customers(id));",
+            "description": "Represents a customer order within the bakery.",
+            "name": "order"
+        },
+        {
+            "classname": "OrderItem",
+            "code": "class OrderItem(Base):\\n    \"\"\"description: Represents the product items for a customer order.\"\"\"\\n    __tablename__ = 'order_items'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    order_id = Column(Integer, ForeignKey('orders.id'))\\n    product_id = Column(Integer, ForeignKey('products.id'))\\n    quantity = Column(Integer)\\n    line_price = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE order_items (id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, product_id INTEGER, quantity INTEGER, line_price INTEGER, FOREIGN KEY(order_id) REFERENCES orders(id), FOREIGN KEY(product_id) REFERENCES products(id));",
+            "description": "Represents the product items for a customer order.",
+            "name": "order_item"
+        },
+        {
+            "classname": "ProductIngredient",
+            "code": "class ProductIngredient(Base):\\n    \"\"\"description: Represents the ingredients required for a product.\"\"\"\\n    __tablename__ = 'product_ingredients'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    product_id = Column(Integer, ForeignKey('products.id'))\\n    ingredient_id = Column(Integer, ForeignKey('ingredients.id'))\\n    amount_needed = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE product_ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, ingredient_id INTEGER, amount_needed INTEGER, FOREIGN KEY(product_id) REFERENCES products(id), FOREIGN KEY(ingredient_id) REFERENCES ingredients(id));",
+            "description": "Represents the ingredients required for a product.",
+            "name": "product_ingredient"
+        },
+        {
+            "classname": "Promotion",
+            "code": "class Promotion(Base):\\n    \"\"\"description: Represents a promotional offer by the bakery for customers.\"\"\"\\n    __tablename__ = 'promotions'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    description = Column(String)\\n    start_date = Column(Date)\\n    end_date = Column(Date)\\n    discount_percentage = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE promotions (id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, start_date DATE, end_date DATE, discount_percentage INTEGER);",
+            "description": "Represents a promotional offer by the bakery for customers.",
+            "name": "promotion"
+        },
+        {
+            "classname": "EmployeePerformance",
+            "code": "class EmployeePerformance(Base):\\n    \"\"\"description: Represents performance records for the employees.\"\"\"\\n    __tablename__ = 'employee_performance'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    employee_id = Column(Integer, ForeignKey('employees.id'))\\n    performance_date = Column(Date)\\n    rating = Column(Integer)\\n",
+            "sqlite_create": "CREATE TABLE employee_performance (id INTEGER PRIMARY KEY AUTOINCREMENT, employee_id INTEGER, performance_date DATE, rating INTEGER, FOREIGN KEY(employee_id) REFERENCES employees(id));",
+            "description": "Represents performance records for the employees.",
+            "name": "employee_performance"
+        }
+    ],
+    "rules": [],
+    "test_data": "Bakery instances: bakery1, bakery2, bakery3, bakery4\\nProduct instances: product1, product2, product3, product4\\nIngredient instances: ingredient1, ingredient2, ingredient3, ingredient4\\nEmployee instances: employee1, employee2, employee3, employee4\\nSupplier instances: supplier1, supplier2, supplier3, supplier4\\nSupplierIngredient instances: supplier_ingredient1, supplier_ingredient2, supplier_ingredient3, supplier_ingredient4\\nCustomer instances: customer1, customer2, customer3, customer4\\nOrder instances: order1, order2, order3, order4\\nOrderItem instances: order_item1, order_item2, order_item3, order_item4\\nProductIngredient instances: product_ingredient1, product_ingredient2, product_ingredient3, product_ingredient4\\nPromotion instances: promotion1, promotion2, promotion3, promotion4\\nEmployeePerformance instances: performance1, performance2, performance3, performance4",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "bakery1",
+            "code": "bakery1 = Bakery(name=\"Baker's Delight\", established_date=date(2010, 5, 15), location=\"123 Baker St.\")"
+        },
+        {
+            "test_data_row_variable": "bakery2",
+            "code": "bakery2 = Bakery(name=\"Bread Heaven\", established_date=date(2015, 7, 20), location=\"456 Bakery Lane\")"
+        },
+        {
+            "test_data_row_variable": "bakery3",
+            "code": "bakery3 = Bakery(name=\"Pastry Paradise\", established_date=date(2018, 9, 10), location=\"789 Dessert Rd.\")"
+        },
+        {
+            "test_data_row_variable": "bakery4",
+            "code": "bakery4 = Bakery(name=\"Cake Corner\", established_date=date(2020, 11, 12), location=\"321 Cupcake Ave.\")"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(bakery_id=1, name=\"Sourdough Bread\", price=5, in_stock=50)"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(bakery_id=2, name=\"Croissant\", price=3, in_stock=100)"
+        },
+        {
+            "test_data_row_variable": "product3",
+            "code": "product3 = Product(bakery_id=3, name=\"Chocolate Cake\", price=20, in_stock=30)"
+        },
+        {
+            "test_data_row_variable": "product4",
+            "code": "product4 = Product(bakery_id=4, name=\"Bagel\", price=2, in_stock=200)"
+        },
+        {
+            "test_data_row_variable": "ingredient1",
+            "code": "ingredient1 = Ingredient(name=\"Flour\", quantity_available=500)"
+        },
+        {
+            "test_data_row_variable": "ingredient2",
+            "code": "ingredient2 = Ingredient(name=\"Sugar\", quantity_available=300)"
+        },
+        {
+            "test_data_row_variable": "ingredient3",
+            "code": "ingredient3 = Ingredient(name=\"Butter\", quantity_available=250)"
+        },
+        {
+            "test_data_row_variable": "ingredient4",
+            "code": "ingredient4 = Ingredient(name=\"Yeast\", quantity_available=150)"
+        },
+        {
+            "test_data_row_variable": "employee1",
+            "code": "employee1 = Employee(bakery_id=1, name=\"John Doe\", position=\"Baker\", start_date=date(2011, 6, 1))"
+        },
+        {
+            "test_data_row_variable": "employee2",
+            "code": "employee2 = Employee(bakery_id=2, name=\"Jane Smith\", position=\"Cashier\", start_date=date(2016, 8, 14))"
+        },
+        {
+            "test_data_row_variable": "employee3",
+            "code": "employee3 = Employee(bakery_id=3, name=\"Alex Johnson\", position=\"Manager\", start_date=date(2019, 10, 9))"
+        },
+        {
+            "test_data_row_variable": "employee4",
+            "code": "employee4 = Employee(bakery_id=4, name=\"Emily Davis\", position=\"Pastry Chef\", start_date=date(2021, 12, 2))"
+        },
+        {
+            "test_data_row_variable": "supplier1",
+            "code": "supplier1 = Supplier(name=\"Supplier One\", contact=\"111-222-3333\")"
+        },
+        {
+            "test_data_row_variable": "supplier2",
+            "code": "supplier2 = Supplier(name=\"Supplier Two\", contact=\"222-333-4444\")"
+        },
+        {
+            "test_data_row_variable": "supplier3",
+            "code": "supplier3 = Supplier(name=\"Supplier Three\", contact=\"333-444-5555\")"
+        },
+        {
+            "test_data_row_variable": "supplier4",
+            "code": "supplier4 = Supplier(name=\"Supplier Four\", contact=\"444-555-6666\")"
+        },
+        {
+            "test_data_row_variable": "supplier_ingredient1",
+            "code": "supplier_ingredient1 = SupplierIngredient(supplier_id=1, ingredient_id=1)"
+        },
+        {
+            "test_data_row_variable": "supplier_ingredient2",
+            "code": "supplier_ingredient2 = SupplierIngredient(supplier_id=2, ingredient_id=2)"
+        },
+        {
+            "test_data_row_variable": "supplier_ingredient3",
+            "code": "supplier_ingredient3 = SupplierIngredient(supplier_id=3, ingredient_id=3)"
+        },
+        {
+            "test_data_row_variable": "supplier_ingredient4",
+            "code": "supplier_ingredient4 = SupplierIngredient(supplier_id=4, ingredient_id=4)"
+        },
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(name=\"Michael Brown\", contact=\"555-123-4567\")"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(name=\"Lisa White\", contact=\"555-234-5678\")"
+        },
+        {
+            "test_data_row_variable": "customer3",
+            "code": "customer3 = Customer(name=\"Kevin Green\", contact=\"555-345-6789\")"
+        },
+        {
+            "test_data_row_variable": "customer4",
+            "code": "customer4 = Customer(name=\"Karen Blue\", contact=\"555-456-7890\")"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(customer_id=1, order_date=date(2022, 5, 5), total_amount=30)"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(customer_id=2, order_date=date(2022, 6, 15), total_amount=45)"
+        },
+        {
+            "test_data_row_variable": "order3",
+            "code": "order3 = Order(customer_id=3, order_date=date(2022, 7, 25), total_amount=25)"
+        },
+        {
+            "test_data_row_variable": "order4",
+            "code": "order4 = Order(customer_id=4, order_date=date(2022, 8, 20), total_amount=60)"
+        },
+        {
+            "test_data_row_variable": "order_item1",
+            "code": "order_item1 = OrderItem(order_id=1, product_id=1, quantity=2, line_price=10)"
+        },
+        {
+            "test_data_row_variable": "order_item2",
+            "code": "order_item2 = OrderItem(order_id=2, product_id=2, quantity=5, line_price=15)"
+        },
+        {
+            "test_data_row_variable": "order_item3",
+            "code": "order_item3 = OrderItem(order_id=3, product_id=3, quantity=1, line_price=20)"
+        },
+        {
+            "test_data_row_variable": "order_item4",
+            "code": "order_item4 = OrderItem(order_id=4, product_id=4, quantity=10, line_price=20)"
+        },
+        {
+            "test_data_row_variable": "product_ingredient1",
+            "code": "product_ingredient1 = ProductIngredient(product_id=1, ingredient_id=1, amount_needed=2)"
+        },
+        {
+            "test_data_row_variable": "product_ingredient2",
+            "code": "product_ingredient2 = ProductIngredient(product_id=2, ingredient_id=2, amount_needed=1)"
+        },
+        {
+            "test_data_row_variable": "product_ingredient3",
+            "code": "product_ingredient3 = ProductIngredient(product_id=3, ingredient_id=3, amount_needed=3)"
+        },
+        {
+            "test_data_row_variable": "product_ingredient4",
+            "code": "product_ingredient4 = ProductIngredient(product_id=4, ingredient_id=4, amount_needed=1)"
+        },
+        {
+            "test_data_row_variable": "promotion1",
+            "code": "promotion1 = Promotion(description=\"Summer Sale\", start_date=date(2023, 6, 1), end_date=date(2023, 7, 31), discount_percentage=10)"
+        },
+        {
+            "test_data_row_variable": "promotion2",
+            "code": "promotion2 = Promotion(description=\"Holiday Discount\", start_date=date(2023, 12, 1), end_date=date(2023, 12, 31), discount_percentage=15)"
+        },
+        {
+            "test_data_row_variable": "promotion3",
+            "code": "promotion3 = Promotion(description=\"Halloween Special\", start_date=date(2023, 10, 25), end_date=date(2023, 11, 1), discount_percentage=20)"
+        },
+        {
+            "test_data_row_variable": "promotion4",
+            "code": "promotion4 = Promotion(description=\"Black Friday\", start_date=date(2023, 11, 25), end_date=date(2023, 11, 25), discount_percentage=25)"
+        },
+        {
+            "test_data_row_variable": "performance1",
+            "code": "performance1 = EmployeePerformance(employee_id=1, performance_date=date(2022, 9, 30), rating=4)"
+        },
+        {
+            "test_data_row_variable": "performance2",
+            "code": "performance2 = EmployeePerformance(employee_id=2, performance_date=date(2022, 10, 30), rating=5)"
+        },
+        {
+            "test_data_row_variable": "performance3",
+            "code": "performance3 = EmployeePerformance(employee_id=3, performance_date=date(2022, 11, 30), rating=3)"
+        },
+        {
+            "test_data_row_variable": "performance4",
+            "code": "performance4 = EmployeePerformance(employee_id=4, performance_date=date(2022, 12, 30), rating=4)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO bakeries (name, established_date, location) VALUES (\"Baker's Delight\", date(2010, 5, 15), \"123 Baker St.\");\\nINSERT INTO bakeries (name, established_date, location) VALUES (\"Bread Heaven\", date(2015, 7, 20), \"456 Bakery Lane\");\\nINSERT INTO bakeries (name, established_date, location) VALUES (\"Pastry Paradise\", date(2018, 9, 10), \"789 Dessert Rd.\");\\nINSERT INTO bakeries (name, established_date, location) VALUES (\"Cake Corner\", date(2020, 11, 12), \"321 Cupcake Ave.\");\\nINSERT INTO products (bakery_id, name, price, in_stock) VALUES (1, \"Sourdough Bread\", 5, 50);\\nINSERT INTO products (bakery_id, name, price, in_stock) VALUES (2, \"Croissant\", 3, 100);\\nINSERT INTO products (bakery_id, name, price, in_stock) VALUES (3, \"Chocolate Cake\", 20, 30);\\nINSERT INTO products (bakery_id, name, price, in_stock) VALUES (4, \"Bagel\", 2, 200);\\nINSERT INTO ingredients (name, quantity_available) VALUES (\"Flour\", 500);\\nINSERT INTO ingredients (name, quantity_available) VALUES (\"Sugar\", 300);\\nINSERT INTO ingredients (name, quantity_available) VALUES (\"Butter\", 250);\\nINSERT INTO ingredients (name, quantity_available) VALUES (\"Yeast\", 150);\\nINSERT INTO employees (bakery_id, name, position, start_date) VALUES (1, \"John Doe\", \"Baker\", date(2011, 6, 1));\\nINSERT INTO employees (bakery_id, name, position, start_date) VALUES (2, \"Jane Smith\", \"Cashier\", date(2016, 8, 14));\\nINSERT INTO employees (bakery_id, name, position, start_date) VALUES (3, \"Alex Johnson\", \"Manager\", date(2019, 10, 9));\\nINSERT INTO employees (bakery_id, name, position, start_date) VALUES (4, \"Emily Davis\", \"Pastry Chef\", date(2021, 12, 2));\\nINSERT INTO suppliers (name, contact) VALUES (\"Supplier One\", \"111-222-3333\");\\nINSERT INTO suppliers (name, contact) VALUES (\"Supplier Two\", \"222-333-4444\");\\nINSERT INTO suppliers (name, contact) VALUES (\"Supplier Three\", \"333-444-5555\");\\nINSERT INTO suppliers (name, contact) VALUES (\"Supplier Four\", \"444-555-6666\");\\nINSERT INTO supplier_ingredients (supplier_id, ingredient_id) VALUES (1, 1);\\nINSERT INTO supplier_ingredients (supplier_id, ingredient_id) VALUES (2, 2);\\nINSERT INTO supplier_ingredients (supplier_id, ingredient_id) VALUES (3, 3);\\nINSERT INTO supplier_ingredients (supplier_id, ingredient_id) VALUES (4, 4);\\nINSERT INTO customers (name, contact) VALUES (\"Michael Brown\", \"555-123-4567\");\\nINSERT INTO customers (name, contact) VALUES (\"Lisa White\", \"555-234-5678\");\\nINSERT INTO customers (name, contact) VALUES (\"Kevin Green\", \"555-345-6789\");\\nINSERT INTO customers (name, contact) VALUES (\"Karen Blue\", \"555-456-7890\");\\nINSERT INTO orders (customer_id, order_date, total_amount) VALUES (1, date(2022, 5, 5), 30);\\nINSERT INTO orders (customer_id, order_date, total_amount) VALUES (2, date(2022, 6, 15), 45);\\nINSERT INTO orders (customer_id, order_date, total_amount) VALUES (3, date(2022, 7, 25), 25);\\nINSERT INTO orders (customer_id, order_date, total_amount) VALUES (4, date(2022, 8, 20), 60);\\nINSERT INTO order_items (order_id, product_id, quantity, line_price) VALUES (1, 1, 2, 10);\\nINSERT INTO order_items (order_id, product_id, quantity, line_price) VALUES (2, 2, 5, 15);\\nINSERT INTO order_items (order_id, product_id, quantity, line_price) VALUES (3, 3, 1, 20);\\nINSERT INTO order_items (order_id, product_id, quantity, line_price) VALUES (4, 4, 10, 20);\\nINSERT INTO product_ingredients (product_id, ingredient_id, amount_needed) VALUES (1, 1, 2);\\nINSERT INTO product_ingredients (product_id, ingredient_id, amount_needed) VALUES (2, 2, 1);\\nINSERT INTO product_ingredients (product_id, ingredient_id, amount_needed) VALUES (3, 3, 3);\\nINSERT INTO product_ingredients (product_id, ingredient_id, amount_needed) VALUES (4, 4, 1);\\nINSERT INTO promotions (description, start_date, end_date, discount_percentage) VALUES (\"Summer Sale\", date(2023, 6, 1), date(2023, 7, 31), 10);\\nINSERT INTO promotions (description, start_date, end_date, discount_percentage) VALUES (\"Holiday Discount\", date(2023, 12, 1), date(2023, 12, 31), 15);\\nINSERT INTO promotions (description, start_date, end_date, discount_percentage) VALUES (\"Halloween Special\", date(2023, 10, 25), date(2023, 11, 1), 20);\\nINSERT INTO promotions (description, start_date, end_date, discount_percentage) VALUES (\"Black Friday\", date(2023, 11, 25), date(2023, 11, 25), 25);\\nINSERT INTO employee_performance (employee_id, performance_date, rating) VALUES (1, date(2022, 9, 30), 4);\\nINSERT INTO employee_performance (employee_id, performance_date, rating) VALUES (2, date(2022, 10, 30), 5);\\nINSERT INTO employee_performance (employee_id, performance_date, rating) VALUES (3, date(2022, 11, 30), 3);\\nINSERT INTO employee_performance (employee_id, performance_date, rating) VALUES (4, date(2022, 12, 30), 4);",
+    "name": "Bakery_Management_System"
+}
